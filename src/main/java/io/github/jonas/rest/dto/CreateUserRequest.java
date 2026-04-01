@@ -1,4 +1,4 @@
-package io.github.jonas.dto;
+package io.github.jonas.rest.dto;
 
 public class CreateUserRequest {
 

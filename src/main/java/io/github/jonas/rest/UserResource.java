@@ -1,6 +1,6 @@
 package io.github.jonas.rest;
 
-import io.github.jonas.dto.CreateUserRequest;
+import io.github.jonas.rest.dto.CreateUserRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
