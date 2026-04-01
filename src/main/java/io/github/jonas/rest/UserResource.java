@@ -1,6 +1,8 @@
 package io.github.jonas.rest;
 
+import io.github.jonas.domain.model.User;
 import io.github.jonas.rest.dto.CreateUserRequest;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -11,7 +13,11 @@ import jakarta.ws.rs.core.Response;
 public class UserResource {
 
     @POST
-    public Response createUser(CreateUserRequest user){
+    @Transactional
+    public Response createUser(CreateUserRequest userRequest){
+        User user = new User(userRequest.getName(), userRequest.getAge());
+        user.persist();
+
         return Response.ok(user).build();
     }
 
