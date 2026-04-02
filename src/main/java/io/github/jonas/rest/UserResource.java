@@ -43,7 +43,7 @@ public class UserResource {
         User user = new User(userRequest.getName(), userRequest.getAge());
         repository.persist(user);
 
-        return Response.ok(user).build();
+        return Response.status(Response.Status.CREATED).entity(user).build();
     }
 
     @GET
@@ -60,7 +60,7 @@ public class UserResource {
 
         if(user != null){
             repository.delete(user);
-            return Response.ok(user).build();
+            return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -74,7 +74,7 @@ public class UserResource {
         if (user != null){
             user.setName(userRequest.getName());
             user.setAge(userRequest.getAge());
-            return Response.ok(user).build();
+            return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
