@@ -1,13 +1,14 @@
 package io.github.jonas.rest.dto;
 
 import jakarta.validation.ConstraintViolation;
+import lombok.Data;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+@Data
 public class ResponseError {
 
     private String message;
@@ -24,17 +25,5 @@ public class ResponseError {
 
         String message = "Validation Error";
         return new ResponseError(message, errors);
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Collection<FieldError> getErrors() {
-        return errors;
     }
 }
