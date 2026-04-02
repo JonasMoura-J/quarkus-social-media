@@ -3,6 +3,7 @@ package io.github.jonas.rest;
 import io.github.jonas.domain.model.User;
 import io.github.jonas.domain.repository.UserRepository;
 import io.github.jonas.rest.dto.CreateUserRequest;
+import io.github.jonas.rest.dto.ResponseError;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,9 +36,8 @@ public class UserResource {
         Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
 
         if(!violations.isEmpty()){
-            ConstraintViolation<CreateUserRequest> err =  violations.stream().findAny().get();
-
-            return Response.status(Response.Status.BAD_REQUEST).entity(err.getMessage()).build();
+            ResponseError responseError = ResponseError.createFromValidation(violations);
+            return Response.status(Response.Status.BAD_REQUEST).entity(responseError).build();
         }
 
         User user = new User(userRequest.getName(), userRequest.getAge());
