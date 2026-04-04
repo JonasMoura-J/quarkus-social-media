@@ -1,0 +1,53 @@
+package io.github.jonas.rest;
+
+
+import io.github.jonas.domain.model.Post;
+import io.github.jonas.domain.model.User;
+import io.github.jonas.domain.repository.PostRepository;
+import io.github.jonas.domain.repository.UserRepository;
+import io.github.jonas.rest.dto.CreatePostRequest;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+@Path("/users/{userId}/posts")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public class PostsResource {
+
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+
+    @Inject
+    public PostsResource(UserRepository userRepository, PostRepository postRepository){
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+    }
+
+    @POST
+    @Transactional
+    public Response savePost(@PathParam("longId") Long userId, CreatePostRequest request){
+        User user = userRepository.findById(userId);
+        if(user == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        Post post = new Post();
+        post.setText(request.getText());
+        post.setUser(user);
+
+        postRepository.persist(post);
+        return Response.status(Response.Status.CREATED).build();
+    }
+
+    @GET
+    public Response listPosts(@PathParam("longId") Long userId){
+        User user = userRepository.findById(userId);
+        if(user == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.status(Response.Status.OK).build();
+    }
+}
