@@ -8,6 +8,7 @@ import io.github.jonas.domain.repository.UserRepository;
 import io.github.jonas.rest.dto.CreatePostRequest;
 import io.github.jonas.rest.dto.PostResponse;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -53,7 +54,8 @@ public class PostResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        PanacheQuery<Post> query = postRepository.find("user", user);
+        PanacheQuery<Post> query = postRepository.find
+                ("user", Sort.by("dateTime", Sort.Direction.Descending), user);
         List<Post> posts = query.list();
         List<PostResponse> postResponseList =
                 posts.stream().map(PostResponse::fromEntitiy).toList();
