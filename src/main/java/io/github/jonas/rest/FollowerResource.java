@@ -5,6 +5,7 @@ import io.github.jonas.domain.repository.FollowerRepository;
 import io.github.jonas.domain.repository.UserRepository;
 import io.github.jonas.rest.dto.FollowerRequest;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -24,18 +25,20 @@ public class FollowerResource {
     }
 
     @PUT
+    @Transactional
     public Response followUser(@PathParam("userId") Long userId, FollowerRequest request){
         var user = userRepository.findById(userId);
-        if(userId == null){
+        if(user == null){
            return Response.status(Response.Status.NOT_FOUND).build();
         }
 
         var follower = userRepository.findById(request.getFollowerId());
+        boolean follows = followerRepository.follows(user, follower);
 
-
-
-        Follower entity = new Follower(user, follower);
-        followerRepository.persist(entity);
+        if(!follows){
+            Follower entity = new Follower(user, follower);
+            followerRepository.persist(entity);
+        }
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }
