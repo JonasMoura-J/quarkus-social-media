@@ -3,12 +3,16 @@ package io.github.jonas.rest;
 import io.github.jonas.domain.model.Follower;
 import io.github.jonas.domain.repository.FollowerRepository;
 import io.github.jonas.domain.repository.UserRepository;
+import io.github.jonas.rest.dto.FollowPerUserResponse;
 import io.github.jonas.rest.dto.FollowerRequest;
+import io.github.jonas.rest.dto.FollowerResponse;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.List;
 
 @Path("/users/{userId}/followers")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -47,6 +51,24 @@ public class FollowerResource {
         }
 
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @GET
+    public Response listFollowers(@PathParam("userId") Long userId){
+
+        var user = userRepository.findById(userId);
+        if(user == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        List<Follower> followers = followerRepository.findByUser(userId);
+        FollowPerUserResponse dto = new FollowPerUserResponse();
+
+        dto.setFollowersCount(followers.size());
+        var followersList = followers.stream().map(FollowerResponse:: new).toList();
+        dto.setContent(followersList);
+
+        return Response.ok().entity(dto).build();
     }
 
 }
